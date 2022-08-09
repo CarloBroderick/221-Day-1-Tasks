@@ -1,0 +1,50 @@
+---
+title: "stl_lead_inequity.qmd"
+author: "Carlo Broderick"
+format: html
+editor: visual
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(janitor)
+```
+
+```{r}
+stl_lead <- read_delim(here::here("data", "stl_blood_lead.csv"))
+
+janitor::clean_names(stl_lead)
+view(stl_lead)
+glimpse(stl_lead)
+names(stl_lead)
+```
+
+```{r}
+stl_lead_prop <- stl_lead |> dplyr::mutate(prop_white =
+                                             (white / totalPop) * 100)
+                               
+view(stl_lead_prop)
+```
+
+```{r}
+#| fig-height: 6
+#| fig-width: 9
+
+
+stl_lead_plot <- ggplot(data = stl_lead_prop, aes(x = pctElevated, y = prop_white)) + 
+         geom_point(aes(color = pctElevated)) +
+  scale_color_gradient(low = "blue", high = "red") +
+  labs(title = "Proportion White by Proportion with Elevated Lead", 
+       x = "Proportion with Elevated Lead",
+       y = "Proportion White")
+
+stl_lead_plot
+```
+
+```{r}
+ggsave(here::here("figs","prop_white_by_prop_high.png"),
+       width = 8,
+       height = 8,
+       dpi = 200)
+```
